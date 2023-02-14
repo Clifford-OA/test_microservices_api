@@ -1,0 +1,119 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Start Service",
+            "type": "shell",
+            "command": "npx nest start ${input:serviceName} ${input:enableWatcher}",
+            "runOptions": {
+                "instanceLimit": 100
+            }
+        },
+        {
+            "label": "Verify MikroORM Setup",
+            "type": "shell",
+            "command": "npx mikro-orm debug",
+            "options": {
+                "env": {
+                    "MIKRO_ORM_CLI": "./apps/${input:serviceName}/src/mikro-orm.config.ts"
+                }
+            }
+        },
+        {
+            "label": "Create Initial Migration",
+            "type": "shell",
+            "command": "npx mikro-orm migration:create --initial",
+            "options": {
+                "env": {
+                    "MIKRO_ORM_CLI": "./apps/${input:serviceName}/src/mikro-orm.config.ts",
+                    "MIRKO_ORM_CREATING_MIGRATION": "true"
+                }
+            }
+        },
+        {
+            "label": "Create Migration",
+            "type": "shell",
+            "command": "npx mikro-orm migration:create",
+            "options": {
+                "env": {
+                    "MIKRO_ORM_CLI": "./apps/${input:serviceName}/src/mikro-orm.config.ts",
+                    "MIRKO_ORM_CREATING_MIGRATION": "true"
+                }
+            }
+        },
+        {
+            "label": "Schema Update",
+            "type": "shell",
+            "command": "npx mikro-orm schema:update --run --no-drop-tables",
+            "options": {
+                "env": {
+                    "MIKRO_ORM_CLI": "./apps/${input:serviceName}/src/mikro-orm.config.ts"
+                }
+            }
+        },
+        {
+            "label": "Schema Update (Dump)",
+            "type": "shell",
+            "command": "npx mikro-orm schema:update --dump --no-drop-tables",
+            "options": {
+                "env": {
+                    "MIKRO_ORM_CLI": "./apps/${input:serviceName}/src/mikro-orm.config.ts"
+                },
+            }
+        },
+        {
+            "label": "Create Seeder",
+            "type": "shell",
+            "command": "npx mikro-orm seeder:create ${input:seederName}",
+            "options": {
+                "env": {
+                    "MIKRO_ORM_CLI": "./apps/${input:serviceName}/src/mikro-orm.config.ts"
+                },
+            }
+        },
+        {
+            "label": "Run Seeder",
+            "type": "shell",
+            "command": "npx mikro-orm seeder:run --class=${input:seederName}Seeder",
+            "options": {
+                "env": {
+                    "MIKRO_ORM_CLI": "./apps/${input:serviceName}/src/mikro-orm.config.ts"
+                },
+            }
+        },
+    ],
+    "inputs": [
+        {
+            "id": "serviceName",
+            "description": "Service Name",
+            "type": "pickString",
+            "options": [
+                "auth",
+                "booking",
+                "users"
+            ]
+        },
+        {
+            "id": "enableWatcher",
+            "description": "Watch?",
+            "type": "pickString",
+            "options": [
+                {
+                    "label": "Yes",
+                    "value": "--watch"
+                },
+                {
+                    "label": "No",
+                    "value": ""
+                },
+            ]
+        },
+        {
+            "id": "seederName",
+            "description": "Seeder Name",
+            "type": "promptString"
+        },
+    ]
+}
