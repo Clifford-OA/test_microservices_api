@@ -92,7 +92,8 @@
             "options": [
                 "auth",
                 "booking",
-                "users"
+                "users",
+                "gateway",
             ]
         },
         {
